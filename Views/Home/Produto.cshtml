@@ -1,0 +1,103 @@
+@model ProdutoVM
+@{
+    ViewData["Title"] = "Produto";
+}
+<section class="py-5 text-center container">
+    <div class="row py-lg-2">
+        <div class="col-lg-6 col-md-8 mx-auto">
+            <h1 class="fw-light">EtecShop</h1>
+            <p class="lead text-muted">Seu ponto de compras na internet.</p>
+        </div>
+    </div>
+</section>
+<div class="album py-5 bg-light">
+    <div class="container ">
+        <div class="row">
+            <div class="col-md-5">
+                <img class="img-fluid px-4" src="@Model.Produto.Foto" alt="@Model.Produto.Nome">
+            </div>
+            <div class="col-md-7">
+                <h2 class="display-6">@Model.Produto.Nome</h2>
+                <p class="text-muted">@Model.Produto.Categoria.Nome</p>
+                <p class="mt-5">@Model.Produto.Descricao</p>
+                <p class="fs-3 fw-bolder">R$ @Model.Produto.Preco.ToString("N2")</p>
+            </div>
+        </div>
+        <hr class="my-5">
+        <div class="row">
+            <div class="col">
+                <h4 class="mb-4">Comentários sobre o Produto</h4>
+                @if (Model.Avaliacoes.Count == 0)
+                {
+                    <div class="card rounded-3 mt-4">
+                        <h5 class="text-center my-4">Este produto ainda não foi avaliado, seja o primeiro!</h5>
+                    </div>
+                }
+                @foreach (var avaliacao in Model.Avaliacoes)
+                {
+                    <div class="card rounded-3 mt-4">
+                        <h5 class="card-header">@avaliacao.Titulo</h5>
+                        <div class="card-body">
+                            <p class="card-text mb-1">@avaliacao.Texto</p>
+                            <small class="card-text mb-1 text-muted t">@avaliacao.Nome em
+                                @avaliacao.DataAvaliacao.ToString("dd/MM/yyyy")</small>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex justify-content-between">
+                                <label>essa avaliação foi útil? </label>
+                                <div>
+                                    <i class="bi bi-hand-thumbs-up cursor-pointer"></i> (0)
+                                    <i class="bi bi-hand-thumbs-down cursor-pointer"></i> (0)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="card rounded-3 mt-4">
+                    <h5 class="card-header">Deixe sua avaliação</h5>
+                    <form method="post" asp-action="Produto">
+                        <input type="hidden" asp-for="Produto.Id">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label class="form-label" asp-for="Nome"></label>
+                                    <input class="form-control" asp-for="Nome">
+                                    <span asp-validation-for="Nome" class="text-danger"></span>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label class="form-label" asp-for="Titulo"></label>
+                                    <input class="form-control" asp-for="Titulo">
+                                    <span asp-validation-for="Titulo" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col mt-2">
+                                <label class="form-label" asp-for="Texto"></label>
+                                <textarea class="form-control" asp-for="Texto" rows="3"></textarea>
+                                <span asp-validation-for="Texto" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <input type="submit" value="Enviar Avaliação" class="btn btn-primary my-2">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"></partial>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        let avaliado = '@Html.Raw(TempData["Avaliacao"])';
+        if (avaliado != '') {
+            window.scrollTo(0, document.body.scrollHeight);
+            Swal.fire({
+                title: 'Avaliação de Produto',
+                text: avaliado,
+                icon: 'success'
+            })
+        }
+    </script>
+}
